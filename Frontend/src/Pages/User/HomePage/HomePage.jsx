@@ -23,15 +23,7 @@ function HomePage() {
             <Hero1/>
             <Quotes/>
             <Hero2/>
-            <br/>  
-            <br/>  
-            <br/>  
-            <br/>  
-            <br/>  
-            <br/>  
-            <br/>  
-            <hr/>
- 
+            <br/>           
             <Footer/>
            
            
