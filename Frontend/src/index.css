@@ -1,0 +1,15 @@
+/* src/styles/index.css or src/index.css */
+
+/* Importing external CSS libraries */
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+
+/* Tailwind imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your custom styles can go here */
+.display-none {
+  @apply hidden;
+}

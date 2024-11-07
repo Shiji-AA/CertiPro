@@ -1,0 +1,13 @@
+{
+    "cSpell.words": [
+        "aboutus"
+    ],
+    "cSpell.customDictionaries": {
+        "custom-dictionary-folder-certipro": {
+            "name": "custom-dictionary-folder-certipro",
+            "path": "${workspaceFolder:CertiPro}/.cspell/custom-dictionary-folder-certipro.txt",
+            "addWords": true,
+            "scope": "folder"
+        }
+    }
+}
