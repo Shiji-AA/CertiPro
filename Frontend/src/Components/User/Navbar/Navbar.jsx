@@ -1,7 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useState } from "react";
 import logoArcite from "../../../assets/logoArcite.png";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../../Redux/Slices/AuthSlice";
 function Navbar() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.userdata);
+  console.log(user,"user")
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -10,7 +22,7 @@ function Navbar() {
 
   return (
     <>
-      <div className=" bg-black text-white text-end pr-10 pb-3">Login</div>
+ 
       <nav className="flex flex-wrap items-center justify-between p-3 bg-white">
         <img src={logoArcite} className="" alt="ARCITE" width="120" />
 
@@ -79,6 +91,12 @@ function Navbar() {
             >
               Contact us
             </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-orange-400 text-black font-semibold hover:text-blue-500 px-3 py-5 border-b-2 border-white-900 md:border-none"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </nav>
