@@ -10,15 +10,32 @@ function EditCertificate() {
   const { id } = useParams(); // Get certificate ID from URL
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+    const [selectedCertificates, setSelectedCertificates] = useState([]);
+
+
+  useEffect(() => {
+    axios
+      .get("/CourseAndCertificate.json")
+      .then((response) => {
+      if (response.data && response.data.courses) {
+      setCourses(response.data.courses);
+        } else {
+          console.error("Invalid JSON structure:", response.data);
+        }
+      })
+      .catch((error) => console.error("Error fetching courses:", error));
+  }, []);
+  
 
   // Validation rules
   const validate = (values) => {
     const errors = {};
-
-    if (!values.certificateId) {
-      errors.certificateId = "Required";
-    } else if (values.certificateId.length < 3) {
-      errors.certificateId = "certificateId Must be 3 characters or more";
+    if (!values.admissionNo) {
+      errors.admissionNo = "Required";
+    } else if (values.admissionNo.length < 1) {
+      errors.admissionNo = "admissionNo Must be greater than 1";
     }
 
     if (!values.studentName) {
@@ -34,30 +51,29 @@ function EditCertificate() {
 
     if (!values.certificateName) {
       errors.certificateName = "Required";
-    } else if (values.certificateName.length < 3) {
-      errors.certificateName = "CertificateName Must be 3 characters or more";
+    } else if (values.certificateName.length < 0) {
+      errors.certificateName = "Please Select at least one certificate ";
     }
 
-    if (values.certificateDate) {
-      const isValidDate = !isNaN(new Date(values.certificateDate).getTime());
-      if (!isValidDate) errors.certificateDate = "Invalid certificate date";
+    if (!values.courseDuration) {
+      errors.courseDuration = "Please select a course duration";
     }
 
-    // 3. Image Validation (if image is selected)
+  
     if (values.image && values.image instanceof File) {
       const allowedFileTypes = ["png", "jpg", "jpeg"];
       const fileExtension = values.image.name.split(".").pop().toLowerCase();
-      const maxSize = 5 * 1024 * 1024; // 5 MB limit
+      const maxSize = 1 * 1024 * 1024; // 5 MB limit
 
       if (!allowedFileTypes.includes(fileExtension)) {
-        errors.certificatePhoto = `Invalid file type. Only ${allowedFileTypes.join(
+        errors.studentPhoto = `Invalid file type. Only ${allowedFileTypes.join(
           ", "
         )} are allowed.`;
       }
 
       if (values.image.size > maxSize) {
-        errors.certificatePhoto =
-          "File size exceeds 5 MB. Please upload a smaller file.";
+        errors.studentPhoto =
+          "File size exceeds 1 MB. Please upload a smaller file.";
       }
     }
 
@@ -67,162 +83,197 @@ function EditCertificate() {
   // Formik for form handling
   const formik = useFormik({
     initialValues: {
+      admissionNo:"",
       certificateId: "",
       certificateName: "",
       studentName: "",
       courseName: "",
-      certificateDate: "",
-      certificatePhoto: null, // To hold file input
+      courseDuration: "",
+      studentPhoto: null, 
     },
     validate,
+
     onSubmit: async (values) => {
       setLoading(true);
+      console.log("Submitting values:", values); // Debugging log
+   
       try {
-        let imgUrl = values.certificatePhoto;
+        let imgUrl = values.studentPhoto;
         if (values.image instanceof File) {
           const data = new FormData();
           data.append("file", values.image);
           data.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
           data.append("cloud_name", import.meta.env.VITE_CLOUD_NAME);
-
+   
           const response = await axios.post(
-            `https://api.cloudinary.com/v1_1/${
-              import.meta.env.VITE_CLOUD_NAME
-            }/image/upload`,
+            `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUD_NAME}/image/upload`,
             data
           );
-
+   
           if (response.data && response.data.url) {
             imgUrl = response.data.url;
           }
         }
+   
+        // Filter out unchanged values
+        const updatedValues = {}
+        Object.keys(values).forEach((key) => {
+          if (values[key] !== formik.initialValues[key] && values[key] !== "") {
+            updatedValues[key] = values[key];
+          }
+        });
 
-        // Update certificate details
+          // Ensure image is updated correctly
+    if (imgUrl !== formik.initialValues.studentPhoto) {
+      updatedValues.studentPhoto = imgUrl;
+    }
+      // If no fields are updated, return early
+      if (Object.keys(updatedValues).length === 0) {
+        toast.error("No changes detected.");
+        setLoading(false);
+        return;
+      }
+   
         const updateResponse = await axiosInstanceAdmin.put(
           `/editcertificate/${id}`,
-          {
-            certificateId: values.certificateId,
-            certificateName: values.certificateName,
-            studentName: values.studentName,
-            courseName: values.courseName,
-            certificateDate: values.certificateDate,
-            certificatePhoto: imgUrl,
-          }
+          updatedValues
         );
-
+   
         if (updateResponse.data) {
-          toast.success("Certificate updated successfully!");
+          console.log("Updated data:", updateResponse.data);
+          toast.success("Admission Details updated successfully!");
           navigate("/getallcertificates");
         }
       } catch (error) {
+        console.error("Error updating details:", error);
         toast.error(
-          error.response?.formData?.error ||
-            "Failed to update certificate. Try again."
+          error.response?.data?.error || "Failed to update Admission Details. Try again."
         );
       } finally {
         setLoading(false);
       }
-    },
+    }
+   
+
   });
 
   useEffect(() => {
-    axiosInstanceAdmin
-      .get(`/getallcertificate1/${id}`)
-      .then((response) => {
-        if (response.data && response.data.certificatesDetails) {
+    if (courses.length === 0) {
+      console.log("Courses not loaded yet. Waiting before fetching certificates.");
+      return;
+    }  
+    axiosInstanceAdmin.get(`/getallcertificate1/${id}`)
+      .then((response) => {      
+        const data = response.data.certificatesDetails
+  console.log(data,"data")
+        if (data) {
           const {
-            certificateId,
-            certificateName,
+            admissionNo,
             studentName,
+            certificateId,
             courseName,
-            certificateDate,
-            certificatePhoto,
-          } = response.data.certificatesDetails;
-
-          // Format the date correctly
-          const formattedDate = certificateDate
-            ? new Date(certificateDate).toISOString().split("T")[0]
-            : "";
-
+            certificateName,
+            courseDuration,
+            studentPhoto,
+          } = data;
+  
           formik.setValues({
-            certificateId: certificateId || "",
-            certificateName: certificateName || "",
-            studentName: studentName || "",
-            courseName: courseName || "",
-            certificateDate: formattedDate, // Set formatted date
-            certificatePhoto: certificatePhoto || null, // Set the image URL
+            admissionNo: admissionNo ,
+            certificateId: certificateId ,
+            studentName: studentName ,
+            courseName: courseName ,
+            certificateName: certificateName|| [],
+            courseDuration: courseDuration ,
+            studentPhoto: studentPhoto || null,
           });
+  
+          // Find the selected course in the `courses` state
+          const selectedCourse = courses.find(course => course.courseName === courseName);
+          
+          console.log("Selected Course from State:", selectedCourse); // Debugging log
+          if (selectedCourse) {
+            setCertificates(selectedCourse.certificateName || []);
+          } else {
+            console.warn(`No course found with name: ${courseName}`);
+            setCertificates([]);
+          }
         }
       })
       .catch((error) => {
-        console.error("Error fetching certificate:", error);
-        toast.error("Failed to load certificate data.");
+        console.error("Error fetching Admission Details:", error);
+        toast.error("Failed to load Admission Details.");
       });
-  }, [id]);
+  }, [id, courses]);
+
+  const handleCourseChange = (e) => {
+    const selectedCourseName = e.target.value;
+    formik.setFieldValue("courseName", selectedCourseName);
+  
+    const selectedCourse = courses.find((c) => c.courseName === selectedCourseName);
+    console.log("Selected Course:", selectedCourse); // Debugging log
+    setCertificates(selectedCourse?.certificateName || []);
+    formik.setFieldValue("certificateName", []);
+  };
+  
+  const handleCertificateClick = (certificate) => {
+    setSelectedCertificates((prevSelected) => {
+      const isSelected = prevSelected.includes(certificate);
+      let updatedSelection;
+  
+      if (isSelected) {
+        updatedSelection = prevSelected.filter((item) => item !== certificate);
+      } else {
+        updatedSelection = [...prevSelected, certificate];
+      }
+  
+      formik.setFieldValue("certificateName", updatedSelection);
+      return updatedSelection;
+    });
+  };
+  
+
 
   return (
     <>
 <AdminNavbar/>
-<div className="bg-gradient-to-b from-gray-200 to-white p-4 rounded-lg min-h-screen">
-      <form onSubmit={formik.handleSubmit} className="p-8 space-y-8">
-        <div className="text-3xl font-semibold mb-8 text-center">
-          Edit Certificate
-        </div>
-        <div className="flex justify-center items-center">
-          <div className="max-w-md w-full mx-auto">
-            <div className="bg-white border border-gray-200 rounded-lg shadow-md p-8">
-              {/* 1 Certificate ID */}
-              <div className="mb-4">
+<div className="bg-gradient-to-b from-teal-300 to-white p-4 rounded-lg">
+  <div className="max-w-3xl mx-auto bg-white rounded-lg overflow-hidden shadow-md">
+  <h2 className="text-2xl font-bold px-6 py-4 bg-tealDark text-teal-800 rounded-t-lg">
+            Edit Admission Details
+          </h2>
+  <form onSubmit={formik.handleSubmit} className="p-6">
+       
+        <div className="mb-4">
+          <div className=" max-w-2xl mx-auto">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-md p-2">
+
+
+               {/* 01 Admission no*/}
+               <div className="mb-4">
                 <label
-                  htmlFor="certificateId"
-                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="admissionNo"
+                  className="block text-sm font-medium text-gray-700"
                 >
-                  Certificate ID
+                  Admission No
                 </label>
                 <input
                   type="text"
-                  id="certificateId"
-                  name="certificateId"
+                  id="admissionNo"
+                  name="admissionNo"
                   className="w-full rounded-lg bg-gray-100 border border-gray-300 p-2"
-                  value={formik.values.certificateId}
+                  value={formik.values.admissionNo}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
-
-              {formik.touched.certificateId && formik.errors.certificateId && (
+               {formik.touched.admissionNo && formik.errors.admissionNo && (
                 <div className="text-red-500 text-sm">
-                  {formik.errors.certificateId}
+                  {formik.errors.admissionNo}
                 </div>
-              )}
+              )} 
 
-              {/* 2 Certificate Name */}
-              <div className="mb-4">
-                <label
-                  htmlFor="certificateName"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Certificate Name
-                </label>
-                <input
-                  type="text"
-                  id="certificateName"
-                  name="certificateName"
-                  className="w-full rounded-lg bg-gray-100 border border-gray-300 p-2"
-                  value={formik.values.certificateName}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
-              {formik.touched.certificateName &&
-                formik.errors.certificateName && (
-                  <div className="text-red-500 text-sm">
-                    {formik.errors.certificateName}
-                  </div>
-                )}
-
-              {/* 3. Student Name */}
-              <div className="mb-4">
+                 {/* 2. Student Name */}
+                 <div className="mb-4">
                 <label
                   htmlFor="studentName"
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -246,63 +297,131 @@ function EditCertificate() {
                 </div>
               )}
 
-              {/* 4. Course Name */}
-              <div className="mb-4">
-                <label
-                  htmlFor="courseName"
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Course Name
-                </label>
-                <input
-                  type="text"
-                  id="courseName"
-                  name="courseName"
-                  className="w-full rounded-lg bg-gray-100 border border-gray-300 p-2"
-                  value={formik.values.courseName}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
 
-              {formik.touched.courseName && formik.errors.courseName && (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.courseName}
-                </div>
-              )}
+                {/* 4. Course Name */}
+          
+
+                  {/* Course Name */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Course Name
+              </label>
+              <select
+                name="courseName"
+                value={formik.values.courseName}
+                onChange={handleCourseChange}
+                className="mt-1 p-2 w-full border rounded-md"
+              >
+                <option value="" disabled>
+                  Select Course
+                </option>
+                {courses.length > 0 ? (
+                  courses.map((course, index) => (
+                    <option key={index} value={course.courseName}>                    
+                      {course.courseName}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>Loading courses...</option>
+                )}
+              </select>
+            
+            </div>
+
 
               {/* 5 Certificate Date */}
               <div className="mb-4">
                 <label
-                  htmlFor="certificateDate"
+                  htmlFor="courseDuration"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
-                  Certificate Date
+                  Course Duration
                 </label>
-                <input
-                  type="date"
-                  id="certificateDate"
-                  name="certificateDate"
-                  className="w-full rounded-lg bg-gray-100 border border-gray-300 p-2"
-                  value={formik.values.certificateDate}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
+                <select
+                name="courseDuration"
+                value={formik.values.courseDuration}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="mt-1 p-2 w-full border border-tealLight rounded-md focus:ring-tealDark focus:border-tealDark"
+              >
+                <option value="" disabled>
+                  Select Duration
+                </option>
+                <option value="1 month">1 Month</option>
+                <option value="2 months">2 Months</option>
+                <option value="3 months">3 Months</option>
+                <option value="4 months">4 Months</option>
+                <option value="6 months">6 Months</option>
+                <option value="1 year">1 Year</option>
+              </select>
               </div>
-              {formik.touched.certificateDate &&
-                formik.errors.certificateDate && (
+              {formik.touched.courseDuration &&
+                formik.errors.courseDuration && (
                   <div className="text-red-500 text-sm">
-                    {formik.errors.certificateDate}
+                    {formik.errors.courseDuration}
                   </div>
                 )}
 
-              {/* Certificate Photo */}
+
+              {/* 1 Certificate ID */}
+              {/* <div className="mb-4">
+                <label
+                  htmlFor="certificateId"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Certificate ID
+                </label>
+                <input
+                  type="text"
+                  id="certificateId"
+                  name="certificateId"
+                  className="w-full rounded-lg bg-gray-100 border border-gray-300 p-2"
+                  value={formik.values.certificateId}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+              </div> */}
+
+              {/* {formik.touched.certificateId && formik.errors.certificateId && (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.certificateId}
+                </div>
+              )} */}
+
+      {/* Certificate Name */}
+        {/* Certificate Name */}
+<div className="mb-4">
+  <label className="block text-sm font-medium text-gray-700">
+    Select Certificates
+  </label>
+  <div className="grid grid-cols-4 gap-4">
+    {certificates.map((certificate, index) => (
+      <button
+        key={index}
+        type="button"
+        onClick={() => handleCertificateClick(certificate)}
+        className={`p-2 rounded-md text-white ${
+          selectedCertificates.includes(certificate) ? "bg-teal-700" : "bg-teal-500"
+        }`}
+      >
+        {certificate}
+      </button>
+    ))}
+  </div>
+</div>
+
+
+           
+
+            
+
+              {/* student Photo */}
               <div className="mb-4">
                 <label
                   htmlFor="image"
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
-                  Certificate Photo
+                  Student Photo
                 </label>
                 <input
                   type="file"
@@ -317,7 +436,7 @@ function EditCertificate() {
                         .split(".")
                         .pop()
                         .toLowerCase();
-                      const maxSize = 5 * 1024 * 1024; // 5 MB limit
+                      const maxSize = 1 * 1024 * 1024; // 1 MB limit
 
                       if (!allowedFileTypes.includes(fileExtension)) {
                         toast.error(
@@ -330,7 +449,7 @@ function EditCertificate() {
 
                       if (file.size > maxSize) {
                         toast.error(
-                          "File size exceeds 5 MB. Please upload a smaller file."
+                          "File size exceeds 51 MB. Please upload a smaller file."
                         );
                         return;
                       }
@@ -343,36 +462,39 @@ function EditCertificate() {
                 />
 
                 {/* Image Preview */}
-                {(formik.values.image || formik.values.certificatePhoto) && (
+                {(formik.values.image || formik.values.studentPhoto) && (
                   <img
                     src={
                       formik.values.image instanceof File
                         ? URL.createObjectURL(formik.values.image)
-                        : formik.values.certificatePhoto // If it's a URL, display it directly
+                        : formik.values.studentPhoto // If it's a URL, display it directly
                     }
                     alt="Certificate Preview"
                     className="mt-2 h-32 w-32 object-cover rounded border"
                   />
                 )}
               </div>
-              {formik.touched.certificatePhoto &&
-                formik.errors.certificatePhoto && (
+              {formik.touched.studentPhoto &&
+                formik.errors.studentPhoto && (
                   <div className="text-red-500 text-sm">
-                    {formik.errors.certificatePhoto}
+                    {formik.errors.studentPhoto}
                   </div>
                 )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2 px-4 text-white bg-teal-600 rounded-md hover:bg-teal-700"
+                className="w-full py-2 px-4 text-white bg-teal-500 rounded-md hover:bg-teal-700"
               >
-                {loading ? "Updating..." : "Update Certificate"}
+                {loading ? "Updating..." : "Update Admission Details"}
               </button>
             </div>
           </div>
         </div>
       </form>
+
+  </div>
+     
     </div>
     </>
  

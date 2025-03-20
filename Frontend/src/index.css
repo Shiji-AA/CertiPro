@@ -3,6 +3,12 @@
 /* Importing external CSS libraries */
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
+@import "@fontsource/roboto"; 
+
+/* Apply the font globally to the body */
+body {
+  font-family: 'Roboto', sans-serif;
+}
 
 /* Tailwind imports */
 @tailwind base;

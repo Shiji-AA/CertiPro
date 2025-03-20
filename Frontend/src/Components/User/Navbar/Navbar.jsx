@@ -24,7 +24,7 @@ function Navbar() {
     <>
  
       <nav className="flex flex-wrap items-center justify-between p-3 bg-white">
-        <img src={logoArcite} className="" alt="ARCITE" width="120" />
+        <img src={logoArcite} className="" alt="ARCITE" height={70} width={150} />
 
         <div className="flex md:hidden">
           <button onClick={toggleMenu}>
@@ -49,7 +49,7 @@ function Navbar() {
             menuOpen ? "block" : "hidden"
           }`}
         >
-          <div className=" ml-72 text-right text-bold mt-5 md:mt-0 border-t-2 border-white-900 md:border-none">
+          <div className=" ml-50 text-right text-bold mt-5 md:mt-0 border-t-2 border-white-900 md:border-none">
             <Link
               to="/"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
@@ -57,43 +57,50 @@ function Navbar() {
               Home
             </Link>
 
-            <Link
+            {/* <Link
               to="/aboutus"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               About Us
-            </Link>
+            </Link> */}
 
-            <Link
+            {/* <Link
               to="/wirp"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               WIRP
-            </Link>
+            </Link> */}
 
-            <Link
+            {/* <Link
               to="/certificate"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               Certificate Validation
-            </Link>
+            </Link> */}
 
             <Link
+              to="/allCertificatesAdmissionNo"
+              className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
+            >
+              Admission No
+            </Link>
+
+            {/* <Link
               to="/affiliation"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               Affiliation
-            </Link>
+            </Link> */}
 
-            <Link
+            {/* <Link
               to="/contact"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               Contact us
-            </Link>
+            </Link> */}
             <button
               onClick={handleLogout}
-              className="bg-orange-400 text-black font-semibold hover:text-blue-500 px-3 py-5 border-b-2 border-white-900 md:border-none"
+              className="bg-teal-400 text-black font-semibold hover:text-teal-900 px-5 py-2 border-b-2 border-white-900 md:border-none"
             >
               Logout
             </button>

@@ -1,0 +1,63 @@
+{
+    "courses": [
+      {
+        "courseName": "ABIM",
+        "certificateName": [
+          "AutoCad",
+          "Primavera",
+          "Sketchup",
+          "Bim theory",
+          "Insight",
+          "NavisWorks"
+        ]
+      },
+      {
+        "courseName": "SBIM",
+        "certificateName": [
+            "AutoCad",
+            "Primavera",
+            "Sketchup",
+            "Bim theory",
+            "Insight",
+            "NavisWorks",
+            "Revit steel",
+            "Revit Structure"
+        ]
+      },
+      {
+        "courseName": "EBIM",
+        "certificateName": [
+            "AutoCad",
+            "Primavera",
+            "Sketchup",
+            "Bim theory",
+            "Insight",
+            "NavisWorks"
+        ]
+      },
+      {
+        "courseName": "CCSE",
+        "certificateName": [
+            "AutoCad",
+            "Primavera",
+            "Sketchup",
+            "Bim theory",
+            "Insight",
+            "NavisWorks",
+            "StaadPro",
+            "PlanSwift",
+            "QA/QC NDT"
+        ]
+      },
+      {
+        "courseName": "P15",
+        "certificateName": [
+          "AutoCad1",
+          "Primavera1",
+          "StaadPro"
+          
+        ]
+      }
+    ]
+  }
+  

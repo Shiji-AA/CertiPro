@@ -46,7 +46,7 @@ function AdminFooter() {
   {/* Middle Section: Follow Us and Contact Us */}
   <div className="grid grid-cols-1 gap-8 lg:col-span-1 sm:grid-cols-2 lg:grid-cols-2">
     <div>
-      <h2 className="font-custom font-normal  mb-4 text-sm text-gray-900">
+      <h2 className="font-semibold mb-4 text-md  text-gray-800">
         Follow Us
       </h2>
       <ul className="space-y-3">
@@ -76,7 +76,7 @@ function AdminFooter() {
       </ul>
     </div>
     <div>
-      <h2 className="font-custom font-normal mb-4 text-sm  text-gray-900">
+      <h2 className=" font-semibold mb-4 text-md  text-gray-800">
         Contact Us
       </h2>
       <ul className="space-y-3">

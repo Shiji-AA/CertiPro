@@ -34,55 +34,55 @@ const  adminLogin = async (req,res) => {
 
 const addcertificate = async (req, res) => {
     try {
-      // Destructure the fields from the request body
+     
       const {
-        certificateId,
+        admissionNo,
         certificateName,
         studentName,
         courseName,
-        certificateDate,
-        certificatePhoto
+        courseDuration ,
+        studentPhoto
       } = req.body;
+
   
       // Check if all required fields are present
-      if (!certificateId || !certificateName || !studentName || !courseName || !certificateDate || !certificatePhoto) {
+      if (!admissionNo || !certificateName || !studentName || !courseName || !courseDuration || !studentPhoto) {
         return res.status(400).json({ error: "All fields are required" });
       }
   
       // Check if certificate already exists by certificateId (using case-insensitive regex)
-      const certificateExist = await Certificate.findOne({
-        certificateId: { $regex: new RegExp(certificateId, 'i') },
+      const admissionNoExist = await Certificate.findOne({
+        admissionNo: { $regex: new RegExp(admissionNo, 'i') },
       });
   
-      if (certificateExist) {
-        console.log('Certificate already exists');
-        return res.status(400).json({ error: 'Certificate already exists' });
+      if (admissionNoExist) {
+        console.log('AdmissionNo already exists');
+        return res.status(400).json({ error: 'AdmissionNo already exists' });
       }
   
       // Create a new certificate
-      const newCertificate = await Certificate.create({
-        certificateId,
+      const newAdmissionNo = await Certificate.create({
+        admissionNo,
         certificateName,
         studentName,
         courseName,
-        certificateDate,
-        certificatePhoto
+        courseDuration,
+        studentPhoto
       });
   
-      // If the certificate was created successfully, send response
-      if (newCertificate) {
-        console.log('New Certificate Added:', newCertificate);
-        return res.status(201).json({
-          certificateId,
+      // If the newAdmissionNo was created successfully, send response
+      if (newAdmissionNo) {
+          return res.status(201).json({
+          admissionNo,
           certificateName,
           studentName,
           courseName,
-          certificateDate,
-          certificatePhoto,
-          message: "Certificate added successfully"
+          courseDuration,
+          studentPhoto,
+          message: "Admission added successfully"
         });
       } else {
-        return res.status(400).json({ error: 'Invalid certificate data' });
+        return res.status(400).json({ error: 'Invalid Admission data' });
       }
     } catch (error) {
       console.error("Error occurred:", error);
@@ -130,42 +130,76 @@ const getCertificateById =async (req,res)=>{
     }
 
 
-    const editCertificate = async (req, res) => {
-        try {
-            const { id } = req.params;
-            const { certificateId, certificateName, studentName, courseName, certificateDate,certificatePhoto } = req.body;
-            console.log("Request Body:", req.body);            
-            const certificate = await Certificate.findById(id);    
-            if (!certificate) {
-                return res.status(404).json({ error: "Invalid certificate" });
-            }
-    
-            certificate.certificateId = certificateId || certificate.certificateId;
-            certificate.certificateName = certificateName || certificate.certificateName;
-            certificate.studentName = studentName || certificate.studentName;
-            certificate.courseName = courseName || certificate.courseName;
-            certificate.certificateDate = certificateDate || certificate.certificateDate;
-            certificate.certificatePhoto = certificatePhoto || certificate.certificatePhoto;
+  //   const editCertificate = async (req, res) => {
+  //     try {
+  //         const { id } = req.params;
+  //         const { certificateId, certificateName, studentName, courseName, courseDuration, studentPhoto, admissionNo } = req.body;
           
-    
-            const updatedCertificate = await certificate.save();
-    
-            if (updatedCertificate) {
-                return res.status(200).json({
-                    message: "Certificate updated successfully",
-                    certificate: updatedCertificate
-                });
-            } else {
-                return res.status(500).json({ error: "Failed to update certificate" });
-            }
-        } catch (error) {
-            console.error("Error updating certificate:", error);
-            return res.status(500).json({ message: "An error occurred. Please try again later." });
+  //         console.log(req.body,"req.body");
+
+  //         const certificate = await Certificate.findById(id);    
+  //         if (!certificate) {
+  //             return res.status(404).json({ error: "Invalid Admission details" });
+  //         }
+  
+  //         // Update fields only if they are provided
+  //         certificate.certificateId = certificateId || certificate.certificateId;
+  //         certificate.certificateName = certificateName || certificate.certificateName;
+  //         certificate.studentName = studentName || certificate.studentName;
+  //         certificate.courseName = courseName || certificate.courseName;
+  //         certificate.courseDuration = courseDuration || certificate.courseDuration ;
+  //         certificate.studentPhoto = studentPhoto || certificate.studentPhoto;
+  //         certificate.admissionNo = admissionNo || certificate.admissionNo;
+  
+  //         const updatedCertificate = await certificate.save();
+  
+  //         if (updatedCertificate) {
+  //             return res.status(200).json({
+  //                 message: "Certificate updated successfully",
+  //                 certificate: updatedCertificate
+  //             });
+  //         } else {
+  //             return res.status(500).json({ error: "Failed to update certificate" });
+  //         }
+  //     } catch (error) {
+  //         console.error("Error updating certificate:", error);
+  //         return res.status(500).json({ message: "An error occurred. Please try again later." });
+  //     }
+  // };
+
+  const editCertificate = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body; // Get only sent fields
+  
+      console.log("Received Update Data:", updateData);
+  
+      const certificate = await Certificate.findById(id);
+      if (!certificate) {
+        return res.status(404).json({ error: "Invalid Admission details" });
+      }
+  
+      // Update only provided fields
+      Object.keys(updateData).forEach((key) => {
+        if (updateData[key] !== undefined) {
+          certificate[key] = updateData[key];
         }
-    };
-
-    
-
+      });
+  
+      const updatedCertificate = await certificate.save();
+  
+      return res.status(200).json({
+        message: "Certificate updated successfully",
+        certificate: updatedCertificate,
+      });
+    } catch (error) {
+      console.error("Error updating certificate:", error);
+      return res.status(500).json({ message: "An error occurred. Please try again later." });
+    }
+  };
+  
+  
+  
       const deleteCertificate = async(req,res)=>{
         try{
           const {id}=req.params;

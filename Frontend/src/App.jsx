@@ -9,6 +9,8 @@ import Register from './Components/User/Register/Register'
 import Login from './Components/User/Login/Login'
 import {Toaster} from 'react-hot-toast';
 import LandingPage from './Pages/User/LandingPage/LandingPage'
+import AllCertificatesDetails from './Pages/User/AllCertificatesDetails/AllCertificatesDetails'
+
 
    //Admin side
 
@@ -17,6 +19,7 @@ import AdminDashboardPage from './Pages/Admin/AdminDashboardPage'
 import AddCertificate from './Components/Admin/CertificatesList/AddCertificate'
 import CertificatesList from './Components/Admin/CertificatesList/CeritificatesList'
 import EditCertificate from './Components/Admin/CertificatesList/EditCertificate'
+
 
 
 function App() {
@@ -31,6 +34,7 @@ function App() {
    <Route path="/aboutus" element={<AboutUs/>} />
    <Route path="/wirp" element={<Wirp/>} />
    <Route path="/certificate" element={<CertificateValidation/>} />
+   <Route path="/allCertificatesAdmissionNo" element={<AllCertificatesDetails/>} />
    <Route path="/affiliation" element={<Affiliation/>} />
    <Route path="/contact" element={<ContactUs />} />
 
@@ -40,6 +44,9 @@ function App() {
   <Route path="/addcertificate" element={<AddCertificate />} />
   <Route path="/getallcertificates" element={<CertificatesList />} />
   <Route path="/editcertificate/:id" element={<EditCertificate/>} />
+
+  
+  
 
    </Routes>
    </Router>

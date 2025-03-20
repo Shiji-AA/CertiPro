@@ -20,7 +20,7 @@ function Footer() {
               {/* First div - takes 2 columns */}
               <div className="col-span-2">
                 <Link to="" className="flex items-center">
-                  <img src={logoArcite} className="h-14 mr-3" alt="ARCITE" />
+                  <img src={logoArcite} className="h-10 w-32 mr-3" alt="ARCITE" />
                 </Link>
                 <p className="text-sm mt-6 text-gray-700 dark:text-gray-400">
                   ARCITE, an ISO 9001-2015 certified institution, was founded in

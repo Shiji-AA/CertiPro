@@ -90,6 +90,23 @@ const loginUser = async (req, res) => {
       return res.status(500).json({ message: "An error occurred. Please try again later." });
     }
   }; 
+
+  const allCertificatesAdmissionNo = async (req, res) => {
+    const { id } = req.params;
+    console.log(id, "Admission No");
+    try {
+      const certificates = await Certificate.find({ admissionNo: id });       
+      if (!certificates || certificates.length === 0) {
+        return res.status(404).json({ success: false, message: "No certificates found for this admission number." });
+      }
+      res.status(200).json({ success: true, message: "Certificate details fetched successfully", certificates });  
+    } catch (error) {
+      console.error("Error fetching certificate details:", error);
+      return res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
+    }
+};
+
   
   
-  export { registerUser,loginUser ,getCertificateById};
+  
+  export { registerUser,loginUser ,getCertificateById,allCertificatesAdmissionNo};

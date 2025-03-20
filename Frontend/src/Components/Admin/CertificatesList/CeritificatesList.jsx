@@ -59,7 +59,7 @@ const CertificatesList = () => {
               </h3>
               <Link to="/addcertificate">
                 <button className="bg-teal-500 text-white px-3 py-1 rounded-lg ">
-                  Add New Certificate
+                  Add New Admission Details
                 </button>
               </Link>
             </div>
@@ -69,12 +69,12 @@ const CertificatesList = () => {
                 <thead className="bg-teal-900 text-white">
                   <tr>
                     <th className="p-3">Sl No</th>
-                    <th className="p-3 text-left">Certificate ID</th>
-                    <th className="p-3 text-left">Certificate Name</th>
+                    <th className="p-3 text-left">Admission No</th>
                     <th className="p-3 text-left">Student Name</th>
                     <th className="p-3 text-left">Course Name</th>
-                    <th className="p-3 text-left">Certificate Date</th>
-                    <th className="p-3 text-left">Certificate Photo</th>
+                    <th className="p-3 text-left">Certificate Name</th>               
+                    <th className="p-3 text-left">Course Duration</th>
+                    <th className="p-3 text-left">Student Photo</th>
                     <th className="p-3 text-left">Action</th>
                   </tr>
                 </thead>
@@ -84,23 +84,28 @@ const CertificatesList = () => {
                       <td className="p-3 font-medium capitalize">
                         {index + 1}
                       </td>
-                      <td className="p-3">{certificate.certificateId}</td>
-                      <td className="p-3">{certificate.certificateName}</td>
-                      <td className="p-3">{certificate.studentName}</td>
-                      <td className="p-3">{certificate.courseName}</td>
-                      <td className="p-3">
-                    {new Date(certificate.certificateDate).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    })}
-                    </td>
+                      <td className="p-3">{certificate.admissionNo}</td>
+                      <td className="p-3">{certificate.studentName}</td>   
+                       <td className="p-3">{certificate.courseName}</td>
+                       <td className="p-3">
+  {Array.isArray(certificate.certificateName) ? (
+    <ul className="list-disc pl-4">
+      {certificate.certificateName.map((cert, i) => (
+        <li key={i}>{cert}</li>
+      ))}
+    </ul>
+  ) : (
+    certificate.certificateName
+  )}
+</td>
 
-                      <td className="p-3">
+                   
+                      <td className="p-3">{certificate.courseDuration}</td>                                  
+                     <td className="p-3">
         {/* Render the image or fallback text */}
-        {certificate.certificatePhoto ? (
+        {certificate.studentPhoto ? (
           <img
-            src={certificate.certificatePhoto}
+            src={certificate.studentPhoto}
             alt="Certificate"
             className="w-16 h-16 object-cover rounded-md"
           />
