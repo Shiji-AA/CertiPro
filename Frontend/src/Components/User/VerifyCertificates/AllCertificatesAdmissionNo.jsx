@@ -69,7 +69,7 @@ function AllCertificatesAdmissionNo() {
           {/* Verify Button */}
           <button
             type="submit"
-            className="w-full flex items-center justify-center py-3 text-lg font-medium text-white bg-teal-500 rounded-lg hover:bg-teal-700 transition disabled:bg-teal-300"
+            className="w-full flex items-center justify-center py-3 text-lg font-medium text-white bg-teal-500 rounded-lg hover:bg-gray-800 transition disabled:bg-teal-300"
             disabled={loading}
           >
             {loading ? <FaSpinner className="animate-spin mr-2" /> : "Verify"}

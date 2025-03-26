@@ -24,7 +24,7 @@ function Hero2() {
           />
           {/* Overlay Text */}
           <div className="relative text-center text-white px-6 py-4">
-          <h4 className="mb-3 text-2xl font-semibold tracking-tight">Aproval For Arcite Courses</h4>
+          <h4 className="mb-3 text-2xl font-semibold tracking-tight">Approval For Arcite Courses</h4>
             <p className="leading-normal py-4">the updated List of approved courses published by Kerala PSC in their official Bulletin (September 15, 2014 edition Page 10) for the post of LD-Typist, Course is accepted so far as equivalent to KGTE Computer Word Processing.To view the list click link below.</p>
 
           </div>

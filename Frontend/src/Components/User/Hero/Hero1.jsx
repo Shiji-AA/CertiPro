@@ -1,4 +1,5 @@
-import cat2 from '../../../assets/cat2.jpg'
+//import cat2 from '../../../assets/cat2.jpg'
+import cat2 from '../../../assets/hero.jpg'
 import about from '../../../assets/about.png'
 
 function Hero1() {
