@@ -23,7 +23,7 @@ function Navbar() {
   return (
     <>
  
-      <nav className="flex flex-wrap items-center justify-between p-3 bg-white">
+      <nav className="flex flex-wrap items-center justify-between p-4 bg-white">
         <img src={logoArcite} className="" alt="ARCITE" height={70} width={150} />
 
         <div className="flex md:hidden">
@@ -49,7 +49,7 @@ function Navbar() {
             menuOpen ? "block" : "hidden"
           }`}
         >
-          <div className=" ml-50 text-right text-bold mt-5 md:mt-0 border-t-2 border-white-900 md:border-none">
+          <div className="text-right text-bold mt-5 md:mt-0 border-t-2 border-white-900 md:border-none">
             <Link
               to="/"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
@@ -78,12 +78,12 @@ function Navbar() {
               Certificate Validation
             </Link> */}
 
-            <Link
+            {/* <Link
               to="/allCertificatesAdmissionNo"
               className="block md:inline-block text-black font-semibold hover:text-blue-500 px-3 py-3 border-b-2 border-white-900 md:border-none"
             >
               Admission No
-            </Link>
+            </Link> */}
 
             {/* <Link
               to="/affiliation"
@@ -98,12 +98,20 @@ function Navbar() {
             >
               Contact us
             </Link> */}
-            <button
+
+            {user?(
+              <button
               onClick={handleLogout}
               className="bg-teal-400 text-black font-semibold hover:text-teal-900 px-5 py-2 border-b-2 border-white-900 md:border-none"
             >
               Logout
             </button>
+
+            ):null
+            
+
+            }
+            
           </div>
         </div>
       </nav>
