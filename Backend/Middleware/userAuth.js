@@ -9,6 +9,7 @@ const findUser = async (userId) => {
 export const isLogin = async (req, res, next) => {
     try {
       const authorizationHeader = req.headers.authorization;
+      console.log("Received Authorization Header-middlewarePage:", authorizationHeader); 
       if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")) {
         return res.status(401).json({ error: "Unauthorized - No token found" });
       }
