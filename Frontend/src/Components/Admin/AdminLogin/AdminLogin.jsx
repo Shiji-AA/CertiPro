@@ -32,9 +32,7 @@ const adminUser = useSelector((state) => state.admin.admindata)
       .then((response) => {
         console.log("Login API Response:", response.data);
   
-        if (response.data.message) {
-          console.log("Received Token:", response.data.token);  // Check if token exists
-  
+        if (response.data) {  
           if (response.data.token) {
             localStorage.setItem("adminToken", response.data.token);
             console.log("Token stored successfully:", localStorage.getItem("adminToken"));
@@ -47,7 +45,7 @@ const adminUser = useSelector((state) => state.admin.admindata)
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error.response ? error.response.data : error);
+        console.error("Login Error:", error);
       });
   };
   

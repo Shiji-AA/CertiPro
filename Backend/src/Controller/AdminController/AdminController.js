@@ -4,34 +4,43 @@ import generateToken from '../../../Utils/generateToken.js'
 import mongoose from "mongoose";
 import User from '../../Model/UserModel.js';
 import Certificate from '../../Model/CertificateModel.js'
+import bcrypt from 'bcryptjs';
 
 
+const adminLogin = async (req, res) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const id = new mongoose.Types.ObjectId(process.env.ADMIN_ID);
+    const hashedAdminPassword = process.env.ADMIN_PASSWORD; // Hashed password from .env
 
-const  adminLogin = async (req,res) => {      
-    try {
-      const adminEmail = process.env.ADMIN_EMAIL;
-      const id = new mongoose.Types.ObjectId(process.env.ADMIN_ID);     
-         
-      const { email, password } = req.body;  
-               
-        if (adminEmail === email && password) {
+    const { email, password } = req.body;
 
-            const token = generateToken(id);
-            console.log("token")
-            return res.status(200).json({
-                id,
-                adminEmail,
-                token,                
-                message :"Logged successfully"             
-            });
-        } else {
-            return res.status(401).json({ message: "Invalid Email or password" });
-        }
-    } catch (error) {
-        return res.status(500).json({ message: "An error occurred. Please try again later." });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
-};
 
+    // Check if the email matches
+    if (adminEmail === email) {
+      // Compare the entered password with the hashed password
+      const isMatch = await bcrypt.compare(password, hashedAdminPassword);
+
+      if (isMatch) {
+        const token = generateToken(id);
+        return res.status(200).json({
+          id,
+          adminEmail,
+          token,
+          message: "Logged in successfully",
+        });
+      }
+    }
+
+    return res.status(401).json({ message: "Invalid Email or Password" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred. Please try again later." });
+  }
+};
 
 const addcertificate = async (req, res) => {
     try {
