@@ -10,7 +10,7 @@ adminRouter.post("/admin",adminLogin);
 
 
 adminRouter.post("/addcertificate",isLogin, addcertificate);
-adminRouter.get("/getallcertificates",isLogin, getAllCertificates);
+adminRouter.get("/getallcertificates", getAllCertificates);
 adminRouter.get("/getallcertificate1/:id", isLogin,getCertificateById);
 adminRouter.put("/editcertificate/:id",isLogin, editCertificate);
 adminRouter.delete("/deletecertificate/:id", isLogin,deleteCertificate);
