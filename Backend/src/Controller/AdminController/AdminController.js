@@ -17,6 +17,7 @@ const  adminLogin = async (req,res) => {
         if (adminEmail === email && password) {
 
             const token = generateToken(id);
+            console.log("token")
             return res.status(200).json({
                 id,
                 adminEmail,

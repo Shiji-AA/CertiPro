@@ -25,24 +25,32 @@ const adminUser = useSelector((state) => state.admin.admindata)
   }
   },[])
 
-const handleSubmit=(e)=> {
-  e.preventDefault();
-  axiosInstanceAdmin.post('/admin',{email,password})
-  .then((response)=>{
-    console.log(response)
-    if(response.data.message){
-      localStorage.setItem("adminToken",response.data.token)  
-      console.log("Token stored successfully:", localStorage.getItem("adminToken"));  
-      dispatch(setAdminInfo(response.data))
-      toast.success(response.data.message);   
-      navigate('/admindashboard')
-    }
-
-  })
- 
- 
-
-}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  
+    axiosInstanceAdmin.post('/admin', { email, password })
+      .then((response) => {
+        console.log("Login API Response:", response.data);
+  
+        if (response.data.message) {
+          console.log("Received Token:", response.data.token);  // Check if token exists
+  
+          if (response.data.token) {
+            localStorage.setItem("adminToken", response.data.token);
+            console.log("Token stored successfully:", localStorage.getItem("adminToken"));
+          } else {
+            console.error("No token received in the response!");
+          }  
+          dispatch(setAdminInfo(response.data));
+          toast.success(response.data.message);
+          navigate('/admindashboard');
+        }
+      })
+      .catch((error) => {
+        console.error("Login Error:", error.response ? error.response.data : error);
+      });
+  };
+  
   return (
     <div className="flex min-h-screen justify-center items-center bg-teal-50"style={{ backgroundImage: `url(${admin1})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100vh', width: '100vw' }}>
       <div className="bg-white rounded-lg border border-gray-300 shadow-md overflow-hidden sm:max-w-sm sm:w-full">

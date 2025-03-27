@@ -21,8 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-    //origin: ['http://localhost:4000', 'https://certipro.arcite.in', 'https://www.certipro.arcite.in', 'http://localhost:3000'],
-    origin: "https://certipro.arcite.in",
+    origin: ['http://localhost:4000', 'https://certipro.arcite.in', 'https://www.certipro.arcite.in', 'http://localhost:3000'],
     methods: "GET, PUT, POST, PATCH, DELETE",
     allowedHeaders: ["Content-Type", "Authorization"]
   };
