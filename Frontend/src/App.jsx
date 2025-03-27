@@ -19,6 +19,7 @@ import AdminDashboardPage from './Pages/Admin/AdminDashboardPage'
 import AddCertificate from './Components/Admin/CertificatesList/AddCertificate'
 import CertificatesList from './Components/Admin/CertificatesList/CeritificatesList'
 import EditCertificate from './Components/Admin/CertificatesList/EditCertificate'
+import PrivatePages from './Components/PrivatePages/PrivatePages'
 
 
 
@@ -40,13 +41,13 @@ function App() {
 
     {/* AdminSide   */}  
   <Route path="/admin" element={<AdminLogin/>} />  
+  <Route element={<PrivatePages/>}>
   <Route path="/admindashboard" element={<AdminDashboardPage />} />
   <Route path="/addcertificate" element={<AddCertificate />} />
   <Route path="/getallcertificates" element={<CertificatesList />} />
   <Route path="/editcertificate/:id" element={<EditCertificate/>} />
-
-  
-  
+  </Route>
+ 
 
    </Routes>
    </Router>

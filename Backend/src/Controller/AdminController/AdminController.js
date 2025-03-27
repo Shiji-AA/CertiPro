@@ -11,8 +11,8 @@ const  adminLogin = async (req,res) => {
     try {
       const adminEmail = process.env.ADMIN_EMAIL;
       const id = new mongoose.Types.ObjectId(process.env.ADMIN_ID);     
-        
-       const { email, password } = req.body;  
+         
+      const { email, password } = req.body;  
                
         if (adminEmail === email && password) {
 
