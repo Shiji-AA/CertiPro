@@ -31,7 +31,8 @@ const handleSubmit=(e)=> {
   .then((response)=>{
     console.log(response)
     if(response.data.message){
-      localStorage.setItem("adminToken",response.data.token)    
+      localStorage.setItem("adminToken",response.data.token)  
+      console.log("Token stored successfully:", localStorage.getItem("adminToken"));  
       dispatch(setAdminInfo(response.data))
       toast.success(response.data.message);   
       navigate('/admindashboard')
